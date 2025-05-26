@@ -36,7 +36,6 @@
     
 6. **BUILD**  
     ```bash
-    cd ../../
     ./waf configure
     ./waf build
     ```
