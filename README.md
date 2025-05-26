@@ -2,12 +2,6 @@
 
 ### Installation Instructions
 
-1. **Install Git LFS**  
-    ```bash
-    sudo apt-get install git-lfs
-    git lfs install
-    ```
-
 2. **Set Up NS-3 Workspace**  
     ```bash
     mkdir NS3
