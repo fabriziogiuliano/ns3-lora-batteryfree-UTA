@@ -1,0 +1,40 @@
+diff --git a/model/periodic-sender.cc b/model/periodic-sender.cc
+index 5fc7434..442922f 100644
+--- a/model/periodic-sender.cc
++++ b/model/periodic-sender.cc
+@@ -63,6 +63,7 @@ PeriodicSender::PeriodicSender ()
+ 
+ {
+   NS_LOG_FUNCTION_NOARGS ();
++  m_uniformRandomVariable = CreateObject<UniformRandomVariable> ();
+ }
+ 
+ PeriodicSender::~PeriodicSender ()
+@@ -123,11 +124,14 @@ PeriodicSender::SendPacket (void)
+       packet = Create<Packet> (m_basePktSize);
+     }
+   m_mac->Send (packet);
++
++  Time m_interval_rnd = m_interval+Seconds(m_uniformRandomVariable->GetInteger (0,60));
++  //Time m_interval_rnd = m_interval;
+   // Fire the callback
+   m_generatedPacket();
+ 
+   // Schedule the next SendPacket event
+-  m_sendEvent = Simulator::Schedule (m_interval, &PeriodicSender::SendPacket,
++  m_sendEvent = Simulator::Schedule (m_interval_rnd, &PeriodicSender::SendPacket,
+                                      this);
+ 
+   NS_LOG_DEBUG ("Sent a packet of size " << packet->GetSize ());
+diff --git a/model/periodic-sender.h b/model/periodic-sender.h
+index cd3f909..6f4b425 100644
+--- a/model/periodic-sender.h
++++ b/model/periodic-sender.h
+@@ -113,6 +113,7 @@ private:
+    * The random variable that adds bytes to the packet size
+    */
+   Ptr<RandomVariableStream> m_pktSizeRV;
++  Ptr<UniformRandomVariable> m_uniformRandomVariable;
+ 
+ 
+ };
