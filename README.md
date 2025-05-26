@@ -54,5 +54,6 @@
 
 8. **Run experiments (with python3)**  
     ```bash
-    TBD...
+    #move to NS-3 directory to run "waf"
+    ./waf --run energy-harvesting-capacitor --nGateways=1 --realisticChannelModel=true --appPeriodSeconds=-1 --packetSize=200 --capacitance=40 --simulationTime=1728000 --RngRun=10 --RngSeed=10 --runId=1 --nDevices=1000 --output_dir=scratch/energy-harvesting-capacitor/EXPERIMENT_deltaEstored_v8=200_UNCONFIRMED_T_ADAPT --adr=0 --DR=5 --radius=1000 --season=winter --confirmed=0 --pv_l=75 --pv_h=135
     ```
