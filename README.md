@@ -28,20 +28,17 @@
    ```bash
     git clone https://github.com/fabriziogiuliano/ns3-lora-batteryfree-UTA scratch/ns3-lora-batteryfree-UTA/    
     ```
+5. **Create and activate Conda Environment for python2.7 to run waf in ns-3.29**  
+    ```bash
+    conda create -n ns3 python=2.7
+    conda activate ns3
+    ```
     
-
-5. **BUILD**  
+6. **BUILD**  
     ```bash
     cd ../../
     ./waf configure
     ./waf build
-    ```
-
-
-6. **Create and activate Conda Environment for python2.7 to run waf in ns-3.29**  
-    ```bash
-    conda create -n ns3 python=2.7
-    conda activate ns3
     ```
 
 
