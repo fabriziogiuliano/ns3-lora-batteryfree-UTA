@@ -2,20 +2,20 @@
 
 ### Installation Instructions
 
-2. **Set Up NS-3 Workspace**  
+1. **Set Up NS-3 Workspace**  
     ```bash
     mkdir NS3
     cd NS3
     ```
 
-3. **Clone NS-3 Repository**  
+2. **Clone NS-3 Repository**  
     ```bash
     git clone https://github.com/nsnam/ns-3-dev-git.git
     cd ns-3-dev-git/
     git checkout ns-3.29
     ```
 
-4. **Add LoRaWAN Module**  
+3. **Add LoRaWAN Module**  
     ```bash
     git clone https://github.com/signetlabdei/capacitor-ns3.git src/lorawan
 
@@ -24,13 +24,13 @@
     echo " =============================="
 
     ```
-5. **Clone WDN-NS-3 Repository and add to scratch sources**
+4. **Clone WDN-NS-3 Repository and add to scratch sources**
    ```bash
     git clone https://github.com/fabriziogiuliano/ns3-lora-batteryfree-UTA scratch/ns3-lora-batteryfree-UTA/    
     ```
     
 
-7. **BUILD**  
+5. **BUILD**  
     ```bash
     cd ../../
     ./waf configure
