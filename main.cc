@@ -368,7 +368,7 @@ void OnEndDeviceStateChange (std::string context,
     break;
   case EndDeviceLoraPhy::STANDBY: state_str="STANDBY"; break;
   case EndDeviceLoraPhy::TX: 
-  
+
     Edev = 0.026;
     Estored_tx_[systemId]=Estored_tx[systemId];
     Estored_tx[systemId]=Estored;
@@ -676,7 +676,7 @@ main (int argc, char *argv[]) {
   // Set up logging
   LogComponentEnable ("Energy-Harveseting-Capacitor", LOG_LEVEL_ALL);
   // LogComponentEnable ("LoraPacketTracker", LOG_LEVEL_ALL);(timestamp, 𝑃ℎ𝑎𝑟 𝑣𝑒𝑠𝑡𝑒𝑟 )
-  LogComponentEnable ("CapacitorEnergySource", LOG_LEVEL_ALL);
+  //LogComponentEnable ("CapacitorEnergySource", LOG_LEVEL_ALL);
   // LogComponentEnable ("CapacitorEnergySourceHelper", LOG_LEVEL_ALL);
   // LogComponentEnable ("LoraRadioEnergyModel", LOG_LEVEL_ALL);
   // LogComponentEnable ("EnergyAwareSender", LOG_LEVEL_ALL);
