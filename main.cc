@@ -49,7 +49,7 @@
 //#include "ns3/mpi-interface.h"
 //#include <mpi.h>
 
-
+#define PATH_MAX 4096
 double Tmin = 1;
 double Tmax = 24;
 
@@ -78,7 +78,10 @@ double E = BasicEnergySupplyVoltageV; // V
 
 //double eh = 0.0001; // fixed EH value
 double eh = -1; // for negative values use variable Solar Harvester from filenameHarvesterSun
-std::string pathToInputFile = "/home/testbed5g/NS3-lorawan2/ns-3-dev-git/scratch/energy-harvesting-capacitor"; 
+std::string pathToInputFile = ""; //"/home/testbed5g/NS3-lorawan2/ns-3-dev-git/scratch/energy-harvesting-capacitor"; 
+
+
+
 //std::string filenameHarvesterSun = "/energy_csv/solar_power_palermo_winter.csv";
 
 // Network Inputs
@@ -335,33 +338,12 @@ void OnEndDeviceStateChange (std::string context,
 
  
 
-  //double Edev=Estored_tx[systemId] - Estored_sleep[systemId];
-
-/*
-  Edev_list[systemId][Edev_index[systemId]] = Estored_tx[systemId] - Estored_sleep[systemId];
-  Edev_index[systemId]+=1;
-  Edev_index[systemId]%=Edev_list_size;
-*/
-  //double Edev_max = getMax(Edev_list[systemId],Edev_list_size);
-  //double Edev_min = getMin(Edev_list[systemId],Edev_list_size);
-
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //-------------------------------
-  //FIXED EDEV!!! for SF7 and packet size 200B
-  //double Edev = 0.0; //getMax(Edev_list[systemId],Edev_list_size);
+  
   //-------------------------------
   
   double alpha = 1; //alpha alto do importanza al presente, alpha basso do importanza al passato
   std::string state_str;
 
-
-
-  /*
-  Edev Dovrebbe essere la differenza tra l'energia nello stato TX e l'energia nello stato SLEEP. 
-  Per rapidità nello studio, si decide di mappare questo valore hardcoded poiché dai dati raccolti ci sono delle cose non molto chiare
-  Edev = 0.145705; per SF12, packetSize=50 e dati energetici di default del modello energy-capacitor. Noto Edev si può iniziare a ragionare 
-  sull'algoritmo di regolazione del T
-  */
   switch (status)
   {
   case EndDeviceLoraPhy::SLEEP: 
@@ -386,29 +368,8 @@ void OnEndDeviceStateChange (std::string context,
     break;
   case EndDeviceLoraPhy::STANDBY: state_str="STANDBY"; break;
   case EndDeviceLoraPhy::TX: 
-
-    /*
-     //FORZO Edev perché NS-3 usa un modello di tipo corrente costante che non fa tornare i conti di energia e Edev stranamente si abbassa quando V si abbassa.
-    if ((capacitance >= 40) && (capacitance < 50))
-      Edev = 0.01;
-    if ((capacitance >= 50) && (capacitance < 60))
-      Edev = 0.015;
-    if ((capacitance >= 60) && (capacitance < 80))
-      Edev = 0.02;
-    */
-   Edev = 0.026;
-   
-   /*
-    if (capacitance >= 40)
-      Edev=0.02;
-    if (capacitance >= 50)
-      Edev=0.02;
-    if (capacitance >= 60)
-      Edev=0.02;
-    if (capacitance >= 80)
-      Edev = 0.026;
-    */
-
+  
+    Edev = 0.026;
     Estored_tx_[systemId]=Estored_tx[systemId];
     Estored_tx[systemId]=Estored;
     DeltaEstored_sleep[systemId]=Estored-Estored_[systemId];
@@ -667,6 +628,17 @@ main (int argc, char *argv[]) {
   std::string interferenceMatrix = "goursaud";
   std::string nodes = "betweeness";
   fileHelpers.clear();
+
+  char path_buffer[PATH_MAX];
+  if (getcwd(path_buffer, sizeof(buffer)) != nullptr) {
+      pathToInputFile = path_buffer;
+      pathToInputFile += "/scratch/ns3-lora-batteryfree-UTA/";
+      std::cout << "pathToInputFile:" << pathToInputFile << std::endl;
+  } else {
+      std::cerr << "Errore nell'ottenere la directory corrente (getcwd): " << strerror(errno) << std::endl;
+      return 1;
+  }
+
 
   CommandLine cmd;
   cmd.AddValue ("nDevices", "Number of end devices to include in the simulation", nDevices);

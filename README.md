@@ -51,5 +51,9 @@
 8. **Run experiments (with python3)**  
     ```bash
     #move to NS-3 directory to run "waf"
-    ./waf --run ns3-lora-batteryfree-UTA --nGateways=1 --realisticChannelModel=true --appPeriodSeconds=-1 --packetSize=200 --capacitance=40 --simulationTime=1728000 --RngRun=10 --RngSeed=10 --runId=1 --nDevices=1000 --output_dir=EXPERIMENT_200_UNCONFIRMED_T_ADAPT --adr=0 --DR=5 --radius=1000 --season=winter --confirmed=0 --pv_l=75 --pv_h=135
+    # RUN FIXED T = 1 hour (appPeriodSeconds=3600)
+   ./waf --run "ns3-lora-batteryfree-UTA --nGateways=1 --realisticChannelModel=true --appPeriodSeconds=3600 --packetSize=200 --capacitance=50 --simulationTime=86400 --RngRun=10 --RngSeed=10 --runId=1 --nDevices=1000 --output_dir=EXPERIMENT_200_UNCONFIRMED_T_3600 --adr=0 --DR=5 --radius=1000 --season=winter --confirmed=0 --pv_l=75 --pv_h=135"
+
+    # RUN T Adapt  (appPeriodSeconds=-1)
+   ./waf --run "ns3-lora-batteryfree-UTA --nGateways=1 --realisticChannelModel=true --appPeriodSeconds=-1 --packetSize=200 --capacitance=50 --simulationTime=86400 --RngRun=10 --RngSeed=10 --runId=1 --nDevices=1000 --output_dir=EXPERIMENT_200_UNCONFIRMED_T_ADAPT --adr=0 --DR=5 --radius=1000 --season=winter --confirmed=0 --pv_l=75 --pv_h=135"
     ```
