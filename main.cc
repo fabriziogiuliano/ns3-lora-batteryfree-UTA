@@ -674,8 +674,8 @@ main (int argc, char *argv[]) {
     
     
   // Set up logging
-  LogComponentEnable ("Energy-Harveseting-Capacitor", LOG_LEVEL_ALL);
-  // LogComponentEnable ("LoraPacketTracker", LOG_LEVEL_ALL);(timestamp, 𝑃ℎ𝑎𝑟 𝑣𝑒𝑠𝑡𝑒𝑟 )
+  //LogComponentEnable ("Energy-Harveseting-Capacitor", LOG_LEVEL_ALL);
+  //LogComponentEnable ("LoraPacketTracker", LOG_LEVEL_ALL);
   //LogComponentEnable ("CapacitorEnergySource", LOG_LEVEL_ALL);
   // LogComponentEnable ("CapacitorEnergySourceHelper", LOG_LEVEL_ALL);
   // LogComponentEnable ("LoraRadioEnergyModel", LOG_LEVEL_ALL);

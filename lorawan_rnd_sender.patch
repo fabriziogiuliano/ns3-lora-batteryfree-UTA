@@ -1,3 +1,85 @@
+diff --git a/model/end-device-lorawan-mac.cc b/model/end-device-lorawan-mac.cc
+index 87d219b..e8ed86c 100644
+--- a/model/end-device-lorawan-mac.cc
++++ b/model/end-device-lorawan-mac.cc
+@@ -204,7 +204,11 @@ EndDeviceLorawanMac::Send (Ptr<Packet> packet)
+       DoSend (packet);
+     }
+ }
+-
++/*
++int EndDeviceLorawanMac::getRetxParams(Ptr<Packet> packet){
++  return 0; //m_retxParams.retxLeft;
++}
++*/
+ void
+ EndDeviceLorawanMac::postponeTransmission (Time netxTxDelay, Ptr<Packet> packet)
+ {
+@@ -389,6 +393,7 @@ EndDeviceLorawanMac::DoSend (Ptr<Packet> packet)
+           packet->AddHeader (macHdr);
+           m_retxParams.retxLeft = m_retxParams.retxLeft - 1;           // decreasing the number of retransmissions
+           NS_LOG_DEBUG ("Retransmitting an old packet.");
++          std::cout << "addr:" << frameHdr.GetAddress().GetNwkAddr() << " m_retxParams.retxLeft:"  <<int(m_retxParams.retxLeft) << std::endl;
+ 
+           // static_cast<ClassAEndDeviceLorawanMac*>(this)->SendToPhy (m_retxParams.packet);
+           SendToPhy (m_retxParams.packet);
+diff --git a/model/lora-interference-helper.cc b/model/lora-interference-helper.cc
+index 6f54bb7..a4795a2 100644
+--- a/model/lora-interference-helper.cc
++++ b/model/lora-interference-helper.cc
+@@ -132,6 +132,7 @@ double minf = std::numeric_limits<double>::min ();
+ // Values are inverted w.r.t. the paper since here we interpret this as an
+ // _isolation_ matrix instead of a cochannel _rejection_ matrix like in
+ // Goursaud's paper.
++/*
+   std::vector<std::vector<double>> LoraInterferenceHelper::collisionSnirGoursaud= {
+     // SF7  SF8  SF9  SF10 SF11 SF12
+     {6, -16, -18, -19, -19, -20}, // SF7
+@@ -141,6 +142,44 @@ double minf = std::numeric_limits<double>::min ();
+     {-33, -33, -33, -33, 6, -29}, // SF11
+     {-36, -36, -36, -36, -36, 6} // SF12
+ };
++*/
++// LoRa Collision Matrix (UNIPA)
++// Values are inverted w.r.t. the paper since here we interpret this as an
++// _isolation_ matrix instead of a cochannel _rejection_ matrix like in
++// Goursaud's paper.
++
++std::vector<std::vector<double>> LoraInterferenceHelper::collisionSnirGoursaud= {
++
++/*
++  // SF7  SF8  SF9  SF10 SF11 SF12
++  {6, -16, -18, -19, -19, -20}, // SF7
++  {-24, 6, -20, -22, -22, -22}, // SF8
++  {-27, -27, 6, -23, -25, -25}, // SF9
++  {-30, -30, -30, 6, -26, -28}, // SF10
++  {-33, -33, -33, -33, 6, -29}, // SF11
++  {-36, -36, -36, -36, -36, 6} // SF12
++*/
++
++    // SF7  SF8  SF9  SF10 SF11 SF12    
++  {  0, -8, -10, -11, -11, -11, -11},
++  {-11,  0, -11, -13, -14, -14, -14},
++  {-14, -13,   0, -14, -16, -17, -17},
++  {-17, -17, -16,   0, -17, -19, -20},
++  {-19, -19, -19, -19,   0, -20, -22},
++  {-22, -22, -22, -22, -22,   0, -23},
++  {-24, -24, -24, -25, -25, -25,   0}
++
++
++  /*
++    {  0, -11, -14, -17, -19, -22, -24},
++    {-8,  0, -13, -17, -19, -22, -24},
++    {-10, -11,   0, -16, -19, -22, -24},
++    {-11, -13, -14,   0, -19, -22, -25},
++    {-11, -14, -16, -17,   0, -22, -25},
++    {-11, -14, -17, -19, -20,   0, -25},
++    {-11, -14, -17, -20, -22, -23,   0}
++  */
++  };
+ 
+ LoraInterferenceHelper::CollisionMatrix LoraInterferenceHelper::collisionMatrix =
+     LoraInterferenceHelper::GOURSAUD;
 diff --git a/model/periodic-sender.cc b/model/periodic-sender.cc
 index 5fc7434..442922f 100644
 --- a/model/periodic-sender.cc
@@ -38,3 +120,107 @@ index cd3f909..6f4b425 100644
  
  
  };
+diff --git a/model/variable-energy-harvester.cc b/model/variable-energy-harvester.cc
+index 321e5b6..c471dd3 100644
+--- a/model/variable-energy-harvester.cc
++++ b/model/variable-energy-harvester.cc
+@@ -132,7 +132,7 @@ VariableEnergyHarvester::UpdateHarvestedPower (void)
+   m_energyHarvestingUpdateEvent.Cancel ();
+ 
+   CalculateHarvestedPower ();
+-
++  
+   energyHarvested = duration.GetSeconds () * m_harvestedPower;
+ 
+   // update total energy harvested
+@@ -192,6 +192,7 @@ VariableEnergyHarvester::ReadPowerFromFile ()
+   // Assumption: one sample every second
+ 
+   std::vector<double> power;
++  std::vector<double> power_timestamp;
+   std::string delimiter1 = ",";
+   std::ifstream inputfile (m_filename);
+   std::string in;
+@@ -211,6 +212,7 @@ VariableEnergyHarvester::ReadPowerFromFile ()
+             }
+           tokens.push_back (in.substr (0, pos)); // This to get the last element
+           power.push_back(std::stod (tokens[5]));
++          power_timestamp.push_back(std::stod (tokens[0]));
+         }
+ 
+       inputfile.close ();
+@@ -224,6 +226,7 @@ VariableEnergyHarvester::ReadPowerFromFile ()
+ 
+   // NS_LOG_DEBUG("power... " << power[0] << " " << power[1]);
+   m_power = power;
++  m_power_timestamp = power_timestamp;
+ 
+   }
+ 
+@@ -231,18 +234,41 @@ VariableEnergyHarvester::ReadPowerFromFile ()
+   VariableEnergyHarvester::GetPowerFromFile (Time time)
+   {
+     NS_LOG_FUNCTION (this);
+-    uint8_t t = time.GetSeconds();
++    
++    
++    //BUG!!!
++    //uint8_t t = time.GetSeconds();
++    ulong t = time.GetSeconds();
++
++
++    //find match timestamp
++
++    auto it = std::find(m_power_timestamp.begin(), m_power_timestamp.end(), t); // Find the target element
++    int index = 0;
++    if (it != m_power_timestamp.end()) {
++        index = std::distance(m_power_timestamp.begin(), it); // Calculate the index
++
++        NS_ASSERT_MSG(t < m_power.size (), "t " << t << "power_size: " << m_power.size());
++        NS_LOG_DEBUG("t: " << double(t) <<" s, Power from file is: " << m_power[index] << " W");
++        //std::cout << "t: " << double(t) <<" s, Power from file is: " << m_power[index] << " W" << std::endl;
++        return m_power[index];
++    } else {
++        // Element not found
++        //std::cout << "Element " << t << " not found in the vector." << std::endl;
++        return 0;
++    }
++    /*
+     if (m_power.size() > 1)
+       {
+         NS_ASSERT_MSG(t < m_power.size (), "t " << t << "power_size: " << m_power.size());
+-        NS_LOG_DEBUG("t: " << double(t) <<" s, Power from file is: " << m_power[t] << " W");
+-        return m_power[t];
++        NS_LOG_DEBUG("t: " << double(t) <<" s, Power from file is: " << m_power[index] << " W");
++        return m_power[index];
+       }
+     else
+       {
+         return 0;
+       }
+-
++    */
+   }
+ 
+ 
+diff --git a/model/variable-energy-harvester.h b/model/variable-energy-harvester.h
+index 178a0a9..5728b42 100644
+--- a/model/variable-energy-harvester.h
++++ b/model/variable-energy-harvester.h
+@@ -32,7 +32,7 @@
+ #include "ns3/energy-harvester.h"
+ #include "ns3/random-variable-stream.h"
+ #include "ns3/device-energy-model.h"
+-
++#include <algorithm>
+ namespace ns3 {
+ 
+ /**
+@@ -130,6 +130,7 @@ private:
+ 
+   std::string m_filename;
+   std::vector<double> m_power;
++  std::vector<double> m_power_timestamp;
+ 
+ };
+ 
